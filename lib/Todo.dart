@@ -7,7 +7,7 @@ class Todo {
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
       id: json['id'] as String,
-      todo: json['todo'] as String,
+      todo: json['to_do'] as String,
     );
   }
 }

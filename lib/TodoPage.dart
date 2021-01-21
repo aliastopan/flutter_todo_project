@@ -59,11 +59,14 @@ class _TodoPageState extends State<TodoPage> {
 
   _getTodo() {
     _showProgress('Loading...');
+
     Services.getTodo().then((todos) {
-      _todoList = todos;
+      setState(() {
+        _todoList = todos;
+        print("Length ${_todoList.length}");
+      });
     });
     _showProgress(widget.title); // reset title
-    print("Length ${_todoList.length}");
   }
 
   _updateTodo(Todo todo) {
@@ -103,8 +106,8 @@ class _TodoPageState extends State<TodoPage> {
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: [
-            DataColumn(label: Text('Id')),
-            DataColumn(label: Text('To Do'))
+            DataColumn(label: Text('ID')),
+            DataColumn(label: Text('TO DO'))
           ],
           rows: _todoList
               .map((todo) => DataRow(cells: [

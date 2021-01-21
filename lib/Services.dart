@@ -8,17 +8,13 @@ class Services {
       var url = "http://192.168.31.224/flutter/fetchtodo.php";
       final response = await http.post(url);
 
-      print('GET TO DO WAS CALLED');
-
       if (200 == response.statusCode) {
         List<Todo> list = parseResponse(response.body);
         return list;
       } else {
-        return List<Todo>(0);
+        return List<Todo>();
       }
-    } catch (e) {
-      return List<Todo>(0);
-    }
+    } catch (e) {}
   }
 
   static List<Todo> parseResponse(String responseBody) {
