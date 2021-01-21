@@ -99,6 +99,10 @@ class _TodoPageState extends State<TodoPage> {
     _todoController.text = '';
   }
 
+  _populateTextField(Todo todo) {
+    _todoController.text = todo.todo;
+  }
+
   SingleChildScrollView _dataBody() {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -111,8 +115,18 @@ class _TodoPageState extends State<TodoPage> {
           ],
           rows: _todoList
               .map((todo) => DataRow(cells: [
-                    DataCell(Text(todo.id)),
-                    DataCell(Text(todo.todo)),
+                    DataCell(
+                      Text(todo.id),
+                      onTap: () {
+                        _populateTextField(todo);
+                      },
+                    ),
+                    DataCell(
+                      Text(todo.todo),
+                      onTap: () {
+                        _populateTextField(todo);
+                      },
+                    ),
                   ]))
               .toList(),
         ),
