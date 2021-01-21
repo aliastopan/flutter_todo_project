@@ -11,7 +11,6 @@ class TodoPage extends StatefulWidget {
 }
 
 class _TodoPageState extends State<TodoPage> {
-  
   List<Todo> _todoList;
   GlobalKey<ScaffoldState> _scaffoldKey;
   TextEditingController _todoController; // control TextField for to do
@@ -26,28 +25,99 @@ class _TodoPageState extends State<TodoPage> {
     _titleProgress = widget.title;
     _scaffoldKey = GlobalKey(); // key to get context for SnackBar
     _todoController = TextEditingController();
+    _getTodo();
   }
 
-  _addTodo(){
+  //update title in the AppBar Title
+  _showProgress(String message) {
+    setState(() {
+      _titleProgress = message;
+    });
+  }
 
+  _showSnackBar(context, message) {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
+  _addTodo() {
+    if (_todoController.text.isEmpty) {
+      print('Empty Field');
+      return;
+    }
+    _showProgress('Adding...');
+    Services.addTodo(_todoController.text).then((result) {
+      if ('success' == result) {
+        _getTodo(); // refresh after update
+        _clearTextField();
+      }
+    });
   }
 
   _getTodo() {
-    //
+    _showProgress('Loading...');
+    Services.getTodo().then((todos) {
+      _todoList = todos;
+    });
+    _showProgress(widget.title); // reset title
+    print("Length ${_todoList.length}");
   }
 
-  _updateTodo() {
-    //
+  _updateTodo(Todo todo) {
+    setState(() {
+      _isUpdating = true;
+    });
+
+    _showProgress('Updating...');
+    Services.updateTodo(todo.id, _todoController.text).then((result) {
+      if ('success' == result) {
+        _getTodo(); // refresh after update
+        _isUpdating = false;
+      }
+    });
+    _clearTextField();
   }
 
-  _deleteTodo() {}
+  _deleteTodo(Todo todo) {
+    _showProgress('Deleting...');
+    Services.deleteTodo(todo.id).then((result) {
+      if ('success' == result) {
+        _getTodo();
+      }
+    });
+    _clearTextField();
+  }
 
   // clear TextField
-  _clearValues() {
+  _clearTextField() {
     _todoController.text = '';
   }
 
+  SingleChildScrollView _dataBody() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columns: [
+            DataColumn(label: Text('Id')),
+            DataColumn(label: Text('To Do'))
+          ],
+          rows: _todoList
+              .map((todo) => DataRow(cells: [
+                    DataCell(Text(todo.id)),
+                    DataCell(Text(todo.todo)),
+                  ]))
+              .toList(),
+        ),
+      ),
+    );
+  }
 
+// UI
 
   @override
   Widget build(BuildContext context) {
@@ -55,43 +125,59 @@ class _TodoPageState extends State<TodoPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(_titleProgress),
-        actions: <Widget> [
+        actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add), 
-            onPressed: (){
-              // fetch
-            })
+              icon: Icon(Icons.add),
+              onPressed: () {
+                // fetch
+              })
         ],
       ),
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget> [
+          children: <Widget>[
             Padding(
               padding: EdgeInsets.all(20.0),
               child: TextField(
                 controller: _todoController,
-                decoration: InputDecoration.collapsed(
-                  hintText: 'Something To Do'),
+                decoration:
+                    InputDecoration.collapsed(hintText: 'Something To Do'),
               ),
             ),
-            Row(
-              children: <Widget> [
-                OutlineButton(
-                  child: Text('UPDATE'),
-                  onPressed: () {
-                    // update
-                  } ),
-                OutlineButton(
-                  child: Text('CANCEL'),
-                  onPressed: () {
-                    // cancel
-                  } )
-              ],
-            )
+            _isUpdating ? updateAndCancel() : Container(),
+            Expanded(
+              child: _dataBody(),
+            ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _addTodo();
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget updateAndCancel() {
+    return Row(
+      children: <Widget>[
+        OutlineButton(
+            child: Text('UPDATE'),
+            onPressed: () {
+              // update
+            }),
+        OutlineButton(
+            child: Text('CANCEL'),
+            onPressed: () {
+              setState(() {
+                _isUpdating = false;
+              });
+              _clearTextField();
+            })
+      ],
     );
   }
 }

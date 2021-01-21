@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:sampleproject/TodoPage.dart';
+import 'TodoPage.dart';
 import 'Services.dart';
 
 void main() {
@@ -7,7 +9,7 @@ void main() {
     MaterialApp(
       home: Scaffold(
         body: SafeArea(
-          child: MyApp(),
+          child: TodoPage(), //MyApp() / TodoPage()
         ),
       ),
     ),
