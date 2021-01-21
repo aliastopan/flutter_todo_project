@@ -111,7 +111,8 @@ class _TodoPageState extends State<TodoPage> {
         child: DataTable(
           columns: [
             DataColumn(label: Text('ID')),
-            DataColumn(label: Text('TO DO'))
+            DataColumn(label: Text('TO DO')),
+            DataColumn(label: Text('DELETE'))
           ],
           rows: _todoList
               .map((todo) => DataRow(cells: [
@@ -119,14 +120,28 @@ class _TodoPageState extends State<TodoPage> {
                       Text(todo.id),
                       onTap: () {
                         _populateTextField(todo);
+                        _selectedTodo = todo;
+                        setState(() {
+                          _isUpdating = true;
+                        });
                       },
                     ),
                     DataCell(
                       Text(todo.todo),
                       onTap: () {
                         _populateTextField(todo);
+                        _selectedTodo = todo;
+                        setState(() {
+                          _isUpdating = true;
+                        });
                       },
                     ),
+                    DataCell(IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteTodo(todo);
+                      },
+                    ))
                   ]))
               .toList(),
         ),
@@ -185,6 +200,7 @@ class _TodoPageState extends State<TodoPage> {
             child: Text('UPDATE'),
             onPressed: () {
               // update
+              _updateTodo(_selectedTodo);
             }),
         OutlineButton(
             child: Text('CANCEL'),
