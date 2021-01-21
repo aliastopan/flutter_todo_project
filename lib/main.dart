@@ -37,18 +37,11 @@ class _MyAppState extends State<MyApp> {
             decoration: InputDecoration.collapsed(hintText: 'enter new task'),
           ),
           MaterialButton(
-            onPressed: () => Services.addTodo(todoctrl.text),
-            child: Text('Add'),
+            onPressed: () => Services.updateTodo('38', 'chung'),
+            child: Text('Update'),
           ),
         ],
       ),
     );
-  }
-
-  void adding(String todoctrl) {
-    var url = "http://192.168.31.224/flutter/addtodo.php";
-    var data = {'todoctrl': todoctrl};
-    var response = http.post(url, body: data);
-    print(response.toString());
   }
 }

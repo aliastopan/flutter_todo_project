@@ -1,12 +1,12 @@
 class Todo {
-  int id;
+  String id;
   String todo;
 
   Todo({this.id, this.todo});
 
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
-      id: json['id'] as int,
+      id: json['id'] as String,
       todo: json['todo'] as String,
     );
   }

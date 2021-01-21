@@ -36,7 +36,6 @@ class Services {
   }
 
   static Future<void> deleteTodo(String todoid) async {
-    print(todoid.isEmpty);
     try {
       var url = "http://192.168.31.224/flutter/deletetodo.php";
       var map = Map<String, dynamic>();
@@ -46,7 +45,7 @@ class Services {
     } catch (e) {}
   }
 
-  static Future<void> updateTodo(int todoid, String todoctrl) async {
+  static Future<void> updateTodo(String todoid, String todoctrl) async {
     try {
       var url = "http://192.168.31.224/flutter/updatetodo.php";
       var map = Map<String, dynamic>();
